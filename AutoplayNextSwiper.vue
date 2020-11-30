@@ -3,12 +3,10 @@
     <div class="autoplay">
       <swiper :options="swiperOption" ref="videoSwiper">
         <swiper-slide v-for="( item , index ) in mediaNews" :key="index">
-          <!--              谷歌会自动拦截有声音的自动播放-->
           <video v-if="item.type===1"
                  :src="item.url"
                  controls
                  muted
-                 :autoplay="index===0"
                  @ended="endVideo(index)"
                  class="multimedia"
           ></video>
@@ -39,6 +37,10 @@
           on: {
             click: () => {
             },
+            //初始化时控制第一个slide切换
+            init: () => {
+              this.initHandle()
+            },
             slideChangeTransitionEnd: () => {
               this.slideChangeTransitionEndHandle()
             }
@@ -46,7 +48,7 @@
         },
         mediaNews: [
                 //1为视频类0为图片类
-          {url: require('../../assets/temp/video1.mp4'), type: 1},
+          {url: require('../../assets/img/default3.jpg'), type: 0},
           {url: require('../../assets/temp/video1.mp4'), type: 1},
           {url: require('../../assets/temp/video1.mp4'), type: 1},
           {url: require('../../assets/img/default3.jpg'), type: 0},
@@ -64,6 +66,19 @@
             swiper.slideTo(0, 1000)
           }, 2000)
         }
+      },
+      initHandle() {
+        let that = this
+        setTimeout(function () {
+          let swiper = that.$refs.videoSwiper.$swiper;
+          console.log(swiper)
+          if (that.mediaNews[0].type === 0) {
+            that.mediaNewsImgHandle(swiper)
+          } else {
+            document.getElementsByClassName('multimedia')[0].play()
+          }
+        },200)
+
       },
       slideChangeTransitionEndHandle() {
         let that = this
