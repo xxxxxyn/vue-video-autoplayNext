@@ -8,5 +8,7 @@ vue多媒体轮播自动切换。结合swiper，视频自动轮播，且视频�
 
 依赖vue-awesome-swiper，用的话要先装这个
 
-图片切换时间按需修改
+图片自动切换时间按需在方法mediaNewsImgHandle内计时器里修改
+
+
 

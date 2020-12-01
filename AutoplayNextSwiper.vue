@@ -35,14 +35,15 @@
             clickable: true,
           },
           on: {
-            click: () => {
-            },
-            //初始化时控制第一个slide切换
-            init: () => {
-              this.initHandle()
-            },
             slideChangeTransitionEnd: () => {
               this.slideChangeTransitionEndHandle()
+            },
+            slideChangeTransitionStart: () => {
+              this.slideChangeTransitionStartHandle()
+            },
+            //控制第一个slide切换
+            init: () => {
+              this.initHandle()
             }
           }
         },
@@ -56,29 +57,43 @@
       }
     },
     methods: {
-      mediaNewsImgHandle(swiper) {
-        if (swiper.activeIndex < this.mediaNews.length - 1) {
-          setTimeout(function () {
-            swiper.slideNext()
-          }, 2000)
-        } else {
-          setTimeout(function () {
-            swiper.slideTo(0, 1000)
-          }, 2000)
-        }
-      },
       initHandle() {
         let that = this
         setTimeout(function () {
           let swiper = that.$refs.videoSwiper.$swiper;
-          console.log(swiper)
           if (that.mediaNews[0].type === 0) {
             that.mediaNewsImgHandle(swiper)
           } else {
             document.getElementsByClassName('multimedia')[0].play()
           }
-        },200)
+        }, 200)
 
+      },
+      mediaNewsImgHandle(swiper) {
+        //刚切换到的activeIndex
+        let changePointActiveIndex=swiper.activeIndex
+        if (swiper.activeIndex < this.mediaNews.length - 1) {
+          setTimeout(function () {
+            //要确认changePointActiveIndex是不是还是目前的activeIndex，是的话计时后执行，不是的话不执行
+            if(changePointActiveIndex===swiper.activeIndex){
+              swiper.slideNext()
+            }
+          }, 2000)
+        } else {
+          setTimeout(function () {
+            if(changePointActiveIndex===swiper.activeIndex){
+              swiper.slideTo(0, 1000)
+            }
+          }, 2000)
+        }
+      },
+      slideChangeTransitionStartHandle() {
+        let swiper = this.$refs.videoSwiper.$swiper;
+        if (this.mediaNews[swiper.activeIndex].type === 1) {
+          document.getElementsByClassName('multimedia')[swiper.activeIndex].currentTime=0
+        }else{
+
+        }
       },
       slideChangeTransitionEndHandle() {
         let that = this
@@ -96,14 +111,13 @@
             swiper.slideNext()
             if (this.mediaNews[swiper.activeIndex].type === 1) {
               document.getElementsByClassName('multimedia')[swiper.activeIndex].play()
-            } else {
             }
+
           } else {
             swiper.slideTo(0, 1000)
             document.getElementsByClassName('multimedia')[swiper.activeIndex].play()
           }
         }
-
       },
     },
   }
