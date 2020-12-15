@@ -1,7 +1,7 @@
 <template>
   <div class="test">
     <div class="autoplay">
-      <swiper :options="swiperOption" ref="videoSwiper">
+      <swiper :options="swiperOption" ref="videoSwiper" v-if="initOrNot">
         <swiper-slide v-for="( item , index ) in mediaNews" :key="index">
           <video v-if="item.type===1"
                  :src="item.url"
@@ -23,6 +23,7 @@
     name: "AutoplayNextSwiper",
     data() {
       return {
+        mediaLastIndex:0,
         swiperOption: {
           speed: 1000,
           loop: false,
@@ -47,12 +48,13 @@
             }
           }
         },
+        initOrNot:false,//mediaNews数据改变的时候确保swiper会init一次
         mediaNews: [
                 //1为视频类0为图片类
-          {url: require('../../assets/img/default3.jpg'), type: 0},
-          {url: require('../../assets/temp/video1.mp4'), type: 1},
-          {url: require('../../assets/temp/video1.mp4'), type: 1},
-          {url: require('../../assets/img/default3.jpg'), type: 0},
+          // {url: require('../../assets/img/default3.jpg'), type: 0},
+          // {url: require('../../assets/temp/video1.mp4'), type: 1},
+          // {url: require('../../assets/temp/video1.mp4'), type: 1},
+          // {url: require('../../assets/img/default3.jpg'), type: 0},
         ],
       }
     },
@@ -88,21 +90,24 @@
         }
       },
       slideChangeTransitionStartHandle() {
-        let swiper = this.$refs.videoSwiper.$swiper;
-        if (this.mediaNews[swiper.activeIndex].type === 1) {
-          document.getElementsByClassName('multimedia')[swiper.activeIndex].currentTime=0
+        let swiper = this.$refs.videoSwiper.$swiper
+        if (this.mediaNews[this.mediaLastIndex].type === 1) {
+          document.getElementsByClassName('multimedia')[this.mediaLastIndex].currentTime=0
         }else{
-
         }
       },
       slideChangeTransitionEndHandle() {
+        console.log('end..')
         let that = this
         let swiper = that.$refs.videoSwiper.$swiper;
         if (this.mediaNews[swiper.activeIndex].type === 0) {
           this.mediaNewsImgHandle(swiper)
         } else {
+          document.getElementsByClassName('multimedia')[this.mediaLastIndex].pause()
           document.getElementsByClassName('multimedia')[swiper.activeIndex].play()
         }
+        this.mediaLastIndex=swiper.activeIndex
+        console.log(this.mediaLastIndex)
       },
       endVideo(index) {
         let swiper = this.$refs.videoSwiper.$swiper;
@@ -120,6 +125,18 @@
         }
       },
     },
+    watch: {
+      mediaNews: {
+        handler(newName, oldName) {
+          this.initOrNot=false
+          this.$nextTick(()=>{
+            this.initOrNot=true
+          })
+        },
+        immediate: true,
+        deep: true
+      }
+    }
   }
 </script>
 
