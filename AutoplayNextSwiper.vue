@@ -103,7 +103,9 @@
         if (this.mediaNews[swiper.activeIndex].type === 0) {
           this.mediaNewsImgHandle(swiper)
         } else {
-          document.getElementsByClassName('multimedia')[this.mediaLastIndex].pause()
+          if(this.mediaLastIndex.type === 1){
+            document.getElementsByClassName('multimedia')[this.mediaLastIndex].pause()
+          }
           document.getElementsByClassName('multimedia')[swiper.activeIndex].play()
         }
         this.mediaLastIndex=swiper.activeIndex
