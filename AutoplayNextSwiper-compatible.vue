@@ -30,23 +30,18 @@
           observer: true,
           observeParents: true,
           autoplayDisableOnInteraction: false,
-          allowTouchMove: false,
-          pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
+          simulateTouch : false,
+          pagination: '.swiper-pagination',
+          paginationClickable :true,
+          onTransitionEnd:() => {
+            this.slideChangeTransitionEndHandle()
           },
-          on: {
-            slideChangeTransitionEnd: () => {
-              this.slideChangeTransitionEndHandle()
-            },
-            slideChangeTransitionStart: () => {
-              this.slideChangeTransitionStartHandle()
-            },
-            //控制第一个slide切换
-            init: () => {
-              this.initHandle()
-            }
-          }
+          onTransitionStart:() => {
+            this.slideChangeTransitionStartHandle()
+          },
+          onInit:()=>{
+            this.initHandle()
+          },
         },
         initOrNot:false,//mediaNews数据改变的时候确保swiper会init一次
         mediaNews: [
@@ -62,7 +57,7 @@
       initHandle() {
         let that = this
         setTimeout(function () {
-          let swiper = that.$refs.videoSwiper.$swiper;
+          let swiper = that.$refs.videoSwiper.swiper;
           if (that.mediaNews[0].type === 0) {
             that.mediaNewsImgHandle(swiper)
           } else {
@@ -90,7 +85,7 @@
         }
       },
       slideChangeTransitionStartHandle() {
-        let swiper = this.$refs.videoSwiper.$swiper
+        let swiper = this.$refs.videoSwiper.swiper
         if (this.mediaNews[this.mediaLastIndex].type === 1) {
           document.getElementsByClassName('multimedia')[this.mediaLastIndex].pause()
         }else{
@@ -99,7 +94,7 @@
       slideChangeTransitionEndHandle() {
         console.log('end..')
         let that = this
-        let swiper = that.$refs.videoSwiper.$swiper;
+        let swiper = that.$refs.videoSwiper.swiper;
         if (this.mediaNews[swiper.activeIndex].type === 0) {
           this.mediaNewsImgHandle(swiper)
         } else {
@@ -110,7 +105,7 @@
         console.log(this.mediaLastIndex)
       },
       endVideo(index) {
-        let swiper = this.$refs.videoSwiper.$swiper;
+        let swiper = this.$refs.videoSwiper.swiper;
         if (index === swiper.activeIndex) {
           if (swiper.activeIndex < this.mediaNews.length - 1) {
             swiper.slideNext()
